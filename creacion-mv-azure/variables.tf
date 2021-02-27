@@ -12,9 +12,9 @@ variable "azurerm_resource_group.practica_dos" {
 }
 
 ## VARIABLE CONTADOR PARA CREAR 3 INTERFACES DE RED Y TRES MÁQUINAS VIRTUALES
-variable "mv_instancia" {  
+variable "num_mv_instancias" {  
   type    = "string"
-  default = "4"
+  default = "2"
 }
 
 ## VARIABLES CUENTA AZURE QUE SE PEDIRAN POR CONSOLA
