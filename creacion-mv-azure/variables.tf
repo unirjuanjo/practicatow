@@ -1,75 +1,43 @@
-#
+## VARIABLES GLOBALES
 variable "location" {
   type string
   description = "Región de Azure donde queremos crearnos la infraesturctura"
   default = "West Wurope"
 }
 
-variable "vm_size_mv1" {
+variable "azurerm_resource_group.practica_dos" {
   type string
-  description = "Tamaño máquina virtual por defecto"
-  default = "Standard_D1_V1" # 3.5 GB, 1 CPU
- 
-variable "vm_size_mv2" {
-  type string
-  description = "Tamaño máquina virtual por defecto"
-  default = "Standard_D1_V1" # 3.5 GB, 1 CPU
-  
-variable "vm_size_mv3" {
-  type string
-  description = "Tamaño máquina virtual por defecto"
-  default = "Standard_D1_V1" # 3.5 GB, 1 CPU
-  
-variable mv1 {
-  type string
-  description = "Máquina virtual que contendrá un servidor NFS y un controller de Ansible"
-  default = "mv_nfs_ansible"
+  description = "Región de Azure donde queremos crearnos la infraesturctura"
+  default = "West Wurope"
 }
 
-variable mv2 {
-  type string
-  description = "Máquina virtual que hará de nodo master de kubernetes"
-  default = "mv_master_kuberetes"
-}
-
-variable mv3 {
-  type string
-  description = "Máquina virtual que hará de nodo worker de kubernetes"
-  default = "mv_worker"
-}
-
-variable mv1_cpu {
-  type string
-  description = "Numero de CPUs mv1"
-  default = "2"
-}
-
-variable mv1_ram {
-  type string
-  description = "Numero de GBs RAM mv1"
+## VARIABLE CONTADOR PARA CREAR 3 INTERFACES DE RED Y TRES MÁQUINAS VIRTUALES
+variable "mv_instancia" {  
+  type    = "string"
   default = "4"
 }
 
-variable mv2_cpu {
-  type string
-  description = "Numero de CPUs mv2"
-  default = "2"
+## VARIABLES CUENTA AZURE QUE SE PEDIRAN POR CONSOLA
+
+variable "azure_client_id" {  
+  type = "string"
 }
 
-variable mv2_ram {
-  type string
-  description = "Numero de GBs RAM mv2"
-  default = "4"
+variable "azure_client_secret" {  
+  type = "string"
 }
 
-variable mv3_cpu {
-  type string
-  description = "Numero de CPUs mv3"
-  default = "2"
+variable "azure_subscription_id" {  
+  type = "string"
 }
 
-variable mv3_ram {
-  type string
-  description = "Numero de GBs RAM mv3"
-  default = "4"
+variable "azure_tenant_id" {  
+  type = "string"
 }
+
+## VARIABLES DE LAS MÁQUINAS VIRTUALES
+variable "vm_size_mv" {
+  type string
+  description = "Tamaño máquina virtual por defecto"
+  default = "Standard_D1_V1" # 3.5 GB, 1 CPU
+} 
