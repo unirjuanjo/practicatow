@@ -3,64 +3,92 @@
 ######################################################################################
 # En la sección provider se indica a Terraform que utilice un proveedor de Azure: subscription_id, client_id, client_secret y tenant_id
 
-provider "azurerm" {
-  version = "~>2.0"
-  features {}
+#provider "azurerm" {
+#  version = "~>2.0"
+#  features {}
+#}
+
+terraform {
+   required_providers {
+     azurerm = {
+       source = "hashicorp/azurerm"
+       vwersion = "=2.46.1"
+     }
+   }
 }
+
+#resource "azurerm_resource_group" "rg" {
+#  name = "<your_resource_group_name>"
+#  location = "<your_resource_group_location>"
+#}
+# Creamos un grupo de recursos y sobre este grupo vamos a crear las máquinas virtuales
+#resource "azurerm_resource_group" "rg" {
+#  name = "kubernetes_rg"
+#  location = var.location
+#}
+
+
+#################  RESOURCE GROUP Y STIRAGE ####################################
+# Se crea un grupo de recursos denominado XXXX en la región xxxxxx
+#resource "azurerm_resource_group" "myterraformgroup" {
+#    name     = "myResourceGroup"
+#    location = "eastus"
+
+#    tags = {
+#        environment = "Terraform Demo"
+#    }
+#}
 
 resource "azurerm_resource_group" "rg" {
-  name = "<your_resource_group_name>"
-  location = "<your_resource_group_location>"
-}
-
-######################################################################################
-# Se crea un grupo de recursos denominado XXXX en la región xxxxxx
-resource "azurerm_resource_group" "myterraformgroup" {
-    name     = "myResourceGroup"
-    location = "eastus"
+    name     = "unir_myterramorgroup_01"
+    location = var.location
 
     tags = {
-        environment = "Terraform Demo"
+        environment = "unir_practica_2"
     }
 }
 
-#####################################################################################
+resource "azurerm_storage_account" "stAccount" {
+    name                      = "unir_staccount_myterramorgroup_01"
+    resource_group_name       = azure_resource_group.rg.name
+    location                  = azure_resource_group.rg.location
+    account_tier              = "Standard"
+    account_replication_type  =   "LRS"
+  
+    tags = {
+        environment = "unir_practica_2"
+    }
+}
+
+############################# RED VIRTUAL Y SUBRED ######################################
 # Creación de una red virtual y subredes
 resource "azurerm_virtual_network" "myterraformnetwork" {
-    name                = "myVnet"
+    name                = "unir_myVnet_01"
     address_space       = ["10.0.0.0/16"]
-    location            = "eastus"
-    resource_group_name = azurerm_resource_group.myterraformgroup.name
+    location            = azure_resource_group.rg.location
+    resource_group_name = azure_resource_group.rg.name
 
     tags = {
-        environment = "Terraform Demo"
+        environment = "unir_practica_2"
     }
 }
 
 resource "azurerm_subnet" "myterraformsubnet" {
-    name                 = "mySubnet"
-    resource_group_name  = azurerm_resource_group.myterraformgroup.name
-    virtual_network_name = azurerm_virtual_network.myterraformnetwork.name
+    name                 = "unir_mySubnet_01"
+    resource_group_name  = azurerm_resource_group.rg.name
+    virtual_network_name = azurerm_virtual_network.rg.name
     address_prefixes       = ["10.0.2.0/24"]
-}
-
-#####################################################################################
-
-# Creación de una dirección IP pública
-resource "azurerm_public_ip" "myterraformpublicip" {
-    name                         = "myPublicIP"
-    location                     = "eastus"
-    resource_group_name          = azurerm_resource_group.myterraformgroup.name
-    allocation_method            = "Dynamic"
-
-    tags = {
-        environment = "Terraform Demo"
+  
+      tags = {
+        environment = "unir_practica_2"
     }
 }
-#####################################################################################
+
+
+########################## GRUPO DE SEGURIDAD DE RED #########################################
 # Creación de un grupo de seguridad de red
 resource "azurerm_network_security_group" "myterraformnsg" {
-    name                = "myNetworkSecurityGroup"
+    name                = "unir_myNetworkSecurityGroup"
     location            = "eastus"
     resource_group_name = azurerm_resource_group.myterraformgroup.name
 
@@ -77,35 +105,76 @@ resource "azurerm_network_security_group" "myterraformnsg" {
     }
 
     tags = {
-        environment = "Terraform Demo"
+        environment = "unir_practica_2"
     }
 }
 
-#####################################################################################
 
+# Connect the security group to the network interface
+resource "azurerm_network_interface_security_group_association" "example" {
+    network_interface_id      = azurerm_network_interface.myterraformnic.id
+    network_security_group_id = azurerm_network_security_group.myterraformnsg.id
+  
+
+######################## IP PUBLICA ###################################
+
+# Creación de una dirección IP pública
+resource "azurerm_public_ip" "myterraformpublicip" {
+    name                         = "myPublicIP"
+    location                     = "eastus"
+    resource_group_name          = azurerm_resource_group.myterraformgroup.name
+    allocation_method            = "Dynamic"
+
+    tags = {
+        environment = "Terraform Demo"
+    }
+}
+  
+############################# TARJETA DE RED ######################################
 # Creación de una tarjeta de interfaz de red virtual
-resource "azurerm_network_interface" "myterraformnic" {
-    name                        = "myNIC"
-    location                    = "eastus"
-    resource_group_name         = azurerm_resource_group.myterraformgroup.name
+resource "azurerm_network_interface" "myNic" {
+    name                        = "unir_vmNic_01"
+    location                    = azure_resource_group.rg.location
+    resource_group_name         = azure_resource_group.rg.name
 
     ip_configuration {
-        name                          = "myNicConfiguration"
+        name                          = "myNicConfiguration_01"
         subnet_id                     = azurerm_subnet.myterraformsubnet.id
         private_ip_address_allocation = "Dynamic"
         public_ip_address_id          = azurerm_public_ip.myterraformpublicip.id
     }
 
     tags = {
-        environment = "Terraform Demo"
+        environment = "unir_practica_2"
     }
 }
 
-# Connect the security group to the network interface
-resource "azurerm_network_interface_security_group_association" "example" {
-    network_interface_id      = azurerm_network_interface.myterraformnic.id
-    network_security_group_id = azurerm_network_security_group.myterraformnsg.id
+
+####################### CRECION DE MAQUINAS VIRTUALES #############################
+# El último paso es crear una máquina virtual y usar todos los recursos creados. En la siguiente sección se crea una máquina virtual llamada myVM 
+# y se asocia una NIC virtual llamada myNIC. Se usa la imagen Ubuntu 18.04-LTS más reciente y se crea un usuario llamado azureuser con la autenticación
+# de contraseña deshabilitada.
+# Los datos de la clave SSH se proporcionan en la sección ssh_keys. Proporcione una clave SSH pública en el campo key_data.
+resource "tls_private_key" "example_ssh" {
+  algorithm = "RSA"
+  rsa_bits = 4096
 }
+
+output "tls_private_key" { value = tls_private_key.example_ssh.private_key_pem }
+
+resource "azurerm_linux_virtual_machine" "myterraformvm" {
+    name                  = "myVM"
+    location              = "eastus"
+    resource_group_name   = azurerm_resource_group.myterraformgroup.name
+    network_interface_ids = [azurerm_network_interface.myterraformnic.id]
+    size                  = "Standard_DS1_v2"
+
+    os_disk {
+        name              = "myOsDisk"
+        caching           = "ReadWrite"
+        storage_account_type = "Premium_LRS"
+    }
+
 
 #####################################################################################
 
@@ -115,28 +184,28 @@ resource "azurerm_network_interface_security_group_association" "example" {
 # pueden ayudarle a solucionar problemas y a supervisar el estado de la máquina virtual. La cuenta de almacenamiento que se crea solo sirve 
 # para almacenar datos de diagnóstico de arranque. Como las cuentas de almacenamiento deben tener un nombre único, con la siguiente sección se 
 # genera un texto aleatorio
-resource "random_id" "randomId" {
-    keepers = {
-        # Generate a new ID only when a new resource group is defined
-        resource_group = azurerm_resource_group.myterraformgroup.name
-    }
+# resource "random_id" "randomId" {
+#     keepers = {
+#         # Generate a new ID only when a new resource group is defined
+#         resource_group = azurerm_resource_group.myterraformgroup.name
+#     }
 
-    byte_length = 8
-}
+#     byte_length = 8
+# }
 
 # Ahora puede crear una cuenta de almacenamiento. Con la siguiente sección se crea una cuenta de almacenamiento,
 # con el nombre según el texto aleatorio generado en el paso anterior:
-resource "azurerm_storage_account" "mystorageaccount" {
-    name                        = "diag${random_id.randomId.hex}"
-    resource_group_name         = azurerm_resource_group.myterraformgroup.name
-    location                    = "eastus"
-    account_replication_type    = "LRS"
-    account_tier                = "Standard"
+# resource "azurerm_storage_account" "mystorageaccount" {
+#     name                        = "diag${random_id.randomId.hex}"
+#     resource_group_name         = azurerm_resource_group.myterraformgroup.name
+#     location                    = "eastus"
+#     account_replication_type    = "LRS"
+#     account_tier                = "Standard"
 
-    tags = {
-        environment = "Terraform Demo"
-    }
-}
+#     tags = {
+#         environment = "Terraform Demo"
+#     }
+# }
 
 #####################################################################################
 # El último paso es crear una máquina virtual y usar todos los recursos creados. En la siguiente sección se crea una máquina virtual llamada myVM 
