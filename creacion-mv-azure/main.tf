@@ -1,46 +1,26 @@
 # Definiciones de recursos para su infraestructura con TERRAFORM
-# Creación de la conexión y el grupo de recursos de Azure
-######################################################################################
+
+########################## PROVIDER ######################################
 # En la sección provider se indica a Terraform que utilice un proveedor de Azure: subscription_id, client_id, client_secret y tenant_id
-
-#provider "azurerm" {
-#  version = "~>2.0"
-#  features {}
-#}
-
 terraform {
    required_providers {
      azurerm = {
        source = "hashicorp/azurerm"
-       vwersion = "=2.46.1"
-     }
+      vwersion = "=2.46.1"
    }
+  }
+}
+provider "azurerm" {  
+  client_id       = "${var.azure_client_id}"
+  client_secret   = "${var.azure_client_secret}"
+  subscription_id = "${var.azure_subscription_id}"
+  tenant_id       = "${var.azure_tenant_id}"
 }
 
-#resource "azurerm_resource_group" "rg" {
-#  name = "<your_resource_group_name>"
-#  location = "<your_resource_group_location>"
-#}
-# Creamos un grupo de recursos y sobre este grupo vamos a crear las máquinas virtuales
-#resource "azurerm_resource_group" "rg" {
-#  name = "kubernetes_rg"
-#  location = var.location
-#}
-
-
-#################  RESOURCE GROUP Y STIRAGE ####################################
-# Se crea un grupo de recursos denominado XXXX en la región xxxxxx
-#resource "azurerm_resource_group" "myterraformgroup" {
-#    name     = "myResourceGroup"
-#    location = "eastus"
-
-#    tags = {
-#        environment = "Terraform Demo"
-#    }
-#}
-
-resource "azurerm_resource_group" "rg" {
-    name     = "unir_myterramorgroup_01"
+#################  RESOURCE GROUP  ####################################
+# Se crea el grupo de recursos 
+resource "azurerm_resource_group" "resource_group" {
+    name     = "unir_resource_group"
     location = var.location
 
     tags = {
@@ -48,35 +28,23 @@ resource "azurerm_resource_group" "rg" {
     }
 }
 
-resource "azurerm_storage_account" "stAccount" {
-    name                      = "unir_staccount_myterramorgroup_01"
-    resource_group_name       = azure_resource_group.rg.name
-    location                  = azure_resource_group.rg.location
-    account_tier              = "Standard"
-    account_replication_type  =   "LRS"
-  
-    tags = {
-        environment = "unir_practica_2"
-    }
-}
-
-############################# RED VIRTUAL Y SUBRED ######################################
+############################# RED PRIVADA: RED VIRTUAL Y SUBRED ######################################
 # Creación de una red virtual y subredes
-resource "azurerm_virtual_network" "myterraformnetwork" {
-    name                = "unir_myVnet_01"
+resource "azurerm_virtual_network" "virtual_network" {
+    name                = "unir_virtual_network"
     address_space       = ["10.0.0.0/16"]
-    location            = azure_resource_group.rg.location
-    resource_group_name = azure_resource_group.rg.name
+    location            = azure_resource_group.resource_group.location
+    resource_group_name = azure_resource_group.resource_group.name
 
     tags = {
         environment = "unir_practica_2"
     }
 }
 
-resource "azurerm_subnet" "myterraformsubnet" {
-    name                 = "unir_mySubnet_01"
-    resource_group_name  = azurerm_resource_group.rg.name
-    virtual_network_name = azurerm_virtual_network.rg.name
+resource "azurerm_subnet" "subnet" {
+    name                 = "unir_subnet"
+    resource_group_name  = azurerm_resource_group.resource_group.name
+    virtual_network_name = azurerm_virtual_network.virtual_network.name
     address_prefixes       = ["10.0.2.0/24"]
   
       tags = {
@@ -87,10 +55,10 @@ resource "azurerm_subnet" "myterraformsubnet" {
 
 ########################## GRUPO DE SEGURIDAD DE RED #########################################
 # Creación de un grupo de seguridad de red
-resource "azurerm_network_security_group" "myterraformnsg" {
-    name                = "unir_myNetworkSecurityGroup"
-    location            = "eastus"
-    resource_group_name = azurerm_resource_group.myterraformgroup.name
+resource "azurerm_network_security_group" "network_security_group" {
+    name                = "unir_network_security_group"
+    location            = azure_resource_group.resource_group.location
+    resource_group_name = azurerm_resource_group.resource_group.name
 
     security_rule {
         name                       = "SSH"
@@ -111,29 +79,30 @@ resource "azurerm_network_security_group" "myterraformnsg" {
 
 
 # Connect the security group to the network interface
-resource "azurerm_network_interface_security_group_association" "example" {
-    network_interface_id      = azurerm_network_interface.myterraformnic.id
-    network_security_group_id = azurerm_network_security_group.myterraformnsg.id
+resource "azurerm_network_interface_security_group_association" "network_interface_security_group_association" {
+    network_interface_id      = azurerm_network_interface.network_interface.id
+    network_security_group_id = azurerm_network_security_group.network_security_group.id
   
 
 ######################## IP PUBLICA ###################################
 
 # Creación de una dirección IP pública
-resource "azurerm_public_ip" "myterraformpublicip" {
-    name                         = "myPublicIP"
-    location                     = "eastus"
-    resource_group_name          = azurerm_resource_group.myterraformgroup.name
+resource "azurerm_public_ip" "public_ip" {
+    name                         = "unir_public_ip"
+    location                     = azure_resource_group.resource_group.location
+    resource_group_name          = azurerm_resource_group.resource_group.name
     allocation_method            = "Dynamic"
 
-    tags = {
-        environment = "Terraform Demo"
-    }
+   tags = {
+        environment = "unir_practica_2"
+   }
 }
   
 ############################# TARJETA DE RED ######################################
 # Creación de una tarjeta de interfaz de red virtual
-resource "azurerm_network_interface" "myNic" {
-    name                        = "unir_vmNic_01"
+resource "azurerm_network_interface" "network_interface" {
+    count                       = "${var.vm}"
+    name                        = "unir_network_interface"
     location                    = azure_resource_group.rg.location
     resource_group_name         = azure_resource_group.rg.name
 
