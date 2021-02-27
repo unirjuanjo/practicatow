@@ -5,6 +5,12 @@ variable "location" {
   default = "West Wurope"
 }
 
+variable "vm_size" {
+  type string
+  description = "Tamaño máquina virtual por defecto"
+  default = "Standard_D1_V1" # 3.5 GB, 1 CPU
+  
+  
 variable mv1 {
   type string
   description = "Máquina virtual que contendrá un servidor NFS y un controller de Ansible"
