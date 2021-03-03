@@ -1,0 +1,2 @@
+---
+- import_playbook: playbooks/configure_master_node.yaml

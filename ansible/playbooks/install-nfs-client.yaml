@@ -1,0 +1,16 @@
+#https://github.com/gc3-uzh-ch/ansible-playbooks/blob/master/roles/common/tasks/nfs.yml
+#
+
+- hosts: nfs
+  become: yes
+  vars_files:
+  - env_variables
+
+  tasks:
+
+# CentOS-specific actions
+  - name: install nfs utils
+    action: dnf pkg=nfs-utils state=present
+
+  - name: install net tools
+    action: dnf pkg=net-tools

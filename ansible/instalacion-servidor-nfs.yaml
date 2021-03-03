@@ -1,0 +1,6 @@
+################################
+# Instalación del servidor NFS #
+################################
+
+
+- import_playbook: playbooks/install-nfs-client.yaml

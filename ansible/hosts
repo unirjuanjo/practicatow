@@ -1,0 +1,12 @@
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+ansible_user=adminUsername
+
+[kubernetes-master-nodes]
+kubernetes-master ansible_host=40.68.28.170 ansible_connection=local
+#kubernetes-master ansible_host=10.0.2.10 ansible_connection=local
+[kubernetes-worker-nodes]
+kubernetes-worker ansible_host=13.73.182.134 ansible_connection=ssh ansible_user=adminUsername
+#kubernetes-worker ansible_host=10.0.2.11 ansible_connection=ssh ansible_user=adminUsername
+[nfs]
+nfs-master ansible_host=40.68.28.170 ansible_connection=local
