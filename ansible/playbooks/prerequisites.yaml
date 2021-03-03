@@ -4,16 +4,25 @@
   vars_files:
   - env_variables
   tasks:
-  - name: Disabling Swap on all nodes
+
+  - name: Vamos a activar transparent masquerading para que los PODs puedan comunicarse dentro del cluster mediante VXLAN
+    shell: |
+     systemctl start firewalld
+     systemctl enable firewalld     
+     modprobe br_netfilter
+     firewall-cmd --add-masquerade --permanent
+     firewall-cmd --reload
+
+  - name: Disabling Swap on all nodes. Desactivamos el Swap
     shell: swapoff -a
 
-  - name: Commenting Swap entries in /etc/fstab
+  - name: Commenting Swap entries in /etc/fstab. Eliminamos la línea del fichero /etc/fstab que monta en el arranque el swap
     replace:
      path: /etc/fstab
      regexp: '(^/.*swap*)'
      replace: '# \1'
 
-  - name: Add IPs to /etc/hosts on master and workers
+  - name: Add IPs to /etc/hosts on master and workers. Configurar resolución DNS. Si no modificamos /etc/hosts
     lineinfile:
       dest: /etc/hosts
       regexp: '.*{{ item }}$'

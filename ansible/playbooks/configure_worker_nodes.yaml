@@ -7,6 +7,8 @@
   - name: Copying token to worker nodes
     copy: src={{ token_file }} dest=join_token
 
-  
   - name: Joining worker nodes with kubernetes master
-    shell: kubeadm --v=5 join --token join_token
+    shell: |
+     kubeadm reset -f
+     cat join_token | tail -2 > out.sh
+     sh out.sh

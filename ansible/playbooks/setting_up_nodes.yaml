@@ -4,12 +4,12 @@
   vars_files:
   - env_variables
   tasks:
-  - name: Creating a repository file for Kubernetes
+  - name: Creating a repository file for Kubernetes. Configuramoe el repositorio de Kubernetes
     file:
      path: /etc/yum.repos.d/kubernetes.repo
      state: touch
 
-  - name: Adding repository details in Kubernetes repo file.
+  - name: Adding repository details in Kubernetes repo file. Istalamos kubernetes
     blockinfile:
      path: /etc/yum.repos.d/kubernetes.repo
      block: |
@@ -22,7 +22,7 @@
       gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
         https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 
-  - name: Installing Docker and firewalld
+  - name: Installing Docker and firewalld. Instalamos docker que será el engine para ejecutar contenedores
     shell: |
      yum install firewalld -y
      yum install -y yum-utils device-mapper-persistent-data lvm2
@@ -41,14 +41,9 @@
      enabled: yes
     with_items: "{{ services }}"
 
-  - name: Allow Network Ports in Firewalld
-    firewalld:
-     port: "{{ item }}"
-     state: enabled
-     permanent: yes
-     immediate: yes
-    with_items: "{{ master_ports if ('kubernetes-master-nodes' in group_names) else worker_ports }}"
-
-  - name: Enabling Bridge Firewall Rule
+ 
+  - name: Enabling Bridge Firewall Rule. iptables  Para permitir que kubernetes maneje correctamente el tráfico con el cortafuego
     shell: "echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables"
-
+ 
+  - name: Enabling Bridge Firewall Rule. ip6tables Para permitir que kubernetes maneje correctamente el tráfico con el cortafuego
+    shell: "echo '1' > /proc/sys/net/bridge/bridge-nf-call-ip6tables"

@@ -1,0 +1,19 @@
+---
+- hosts: nfs
+  become: yes
+  vars_files:
+  - env_variables_nfs
+  tasks:
+
+  - name: Inicializando dispositivo de bloque que será usado como volumen físico
+     shell: pvcreate {{nfs_disk}}
+
+  - name: Creando el grupo del volumen
+     shell: |
+       vgcreate data_vg {{nfs_disk}}
+       vgdisplay data_vg
+
+
+
+
+

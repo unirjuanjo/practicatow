@@ -4,7 +4,19 @@
   vars_files:
   - env_variables
   tasks:
-  - name: Pulling images required for setting up a Kubernetes cluster
+ 
+  - name: Allow Network Ports in Firewalld. Configuramos el firewall para acceder a los servicios de kubernetes
+    firewalld:
+     port: "{{ item }}"
+     state: enabled
+     permanent: yes
+     immediate: yes
+    with_items: "{{ master_ports if ('kubernetes-master-nodes' in group_names) else worker_ports }}"
+
+  - name: Permitiremos el acceso desde los workers
+    shell: firewall-cmd --permanent --add-rich-rule 'rule family=ipv4 source address=10.0.2.11/24 accept'
+          
+  - name: Pulling images required for setting up a Kubernetes cluster. Configuramos kubadm
     shell: kubeadm config images pull
 
   - name: Resetting kubeadm

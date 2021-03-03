@@ -1,0 +1,11 @@
+---
+- hosts: nfs
+  become: yes
+  vars_files:
+  - env_variables_nfs
+  tasks:
+
+  - name: Creando el volumen lógico
+     shell: | 
+      lvcreate -l+2559 -n nfs_lv /dev/data_vg
+      lvs 

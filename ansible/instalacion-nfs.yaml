@@ -1,0 +1,9 @@
+################################
+# Instalación del servidor NFS #
+################################
+
+- import_playbook: playbooks/create_volume_group.yaml
+- import_playbook: playbooks/create_logical_volume.yaml
+- imoort_playbook: playbooks/create_filesystem_nfs.yaml
+- import_playbook: playbooks/install-nfs-client.yaml
+- import_playbook: setting_nfs.yaml

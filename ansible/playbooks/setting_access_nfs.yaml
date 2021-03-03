@@ -1,0 +1,22 @@
+---
+- hosts: nfs
+  become: yes
+  vars_files:
+  - env_variables_nfs
+ 
+  tasks:
+
+  - name: Configurando acceso al share de NFSA para master
+    lineinfile:
+      path: /etc/hosts
+      line: "/srv/nfs   {{nfs_in_master}}(rw,sync)"
+
+  - name: Configurando acceso al share de NFSA para worker
+    lineinfile:
+      path: /etc/hosts
+      line: "/srv/nfs   {nfs_in_worker}}(rw,sync)"
+
+  -name: Aplicando configuración
+   shell: |
+         exportfs -r
+         exportfs -s  

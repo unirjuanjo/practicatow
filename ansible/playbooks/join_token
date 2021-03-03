@@ -33,13 +33,13 @@
 [etcd] Creating static Pod manifest for local etcd in "/etc/kubernetes/manifests"
 [wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory "/etc/kubernetes/manifests". This can take up to 4m0s
 [kubelet-check] Initial timeout of 40s passed.
-[apiclient] All control plane components are healthy after 60.003627 seconds
+[apiclient] All control plane components are healthy after 60.002816 seconds
 [upload-config] Storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
 [kubelet] Creating a ConfigMap "kubelet-config-1.20" in namespace kube-system with the configuration for the kubelets in the cluster
 [upload-certs] Skipping phase. Please see --upload-certs
 [mark-control-plane] Marking the node unirlinuxvirtualmachine0 as control-plane by adding the labels "node-role.kubernetes.io/master=''" and "node-role.kubernetes.io/control-plane='' (deprecated)"
 [mark-control-plane] Marking the node unirlinuxvirtualmachine0 as control-plane by adding the taints [node-role.kubernetes.io/master:NoSchedule]
-[bootstrap-token] Using token: dlreja.u076rdilavcd9tza
+[bootstrap-token] Using token: zogw9l.e3srb5x8hsvgvtdb
 [bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
 [bootstrap-token] configured RBAC rules to allow Node Bootstrap tokens to get nodes
 [bootstrap-token] configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
@@ -68,5 +68,5 @@ Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
 
 Then you can join any number of worker nodes by running the following on each as root:
 
-kubeadm join 10.0.2.10:6443 --token dlreja.u076rdilavcd9tza \
-    --discovery-token-ca-cert-hash sha256:4ec077a90e320b09d04d5bdd350c85dcc87a25aa823160a99a87161cd34a0222 
+kubeadm join 10.0.2.10:6443 --token zogw9l.e3srb5x8hsvgvtdb \
+    --discovery-token-ca-cert-hash sha256:d707e915122e1c53e0e82170895a318fd3c077a9639372dccbcd57f7f5e5b03e 

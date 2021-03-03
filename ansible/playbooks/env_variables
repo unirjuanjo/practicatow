@@ -1,7 +1,5 @@
-#ad_addr: 10.11.12.2
-#cidr_v: 10.244.0.0/16
-ad_addr: 40.68.28.170
-cidr_v: 172.17.0.0/16
+ad_addr: 10.0.2.10
+cidr_v: 172.17.0.1/16
 
 packages:
 - kubeadm

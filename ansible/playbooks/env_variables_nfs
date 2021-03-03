@@ -1,0 +1,4 @@
+nfs_disk: /dev/sdb
+
+nfs_in_master: 40.68.254.62
+nfs_in_worker: 13.81.0.50

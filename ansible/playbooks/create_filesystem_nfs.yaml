@@ -1,0 +1,17 @@
+---
+- hosts: nfs
+  become: yes
+  vars_files:
+  - env_variables_nfs
+  tasks:
+
+  - name: Formateando ......
+     shell: mkfs.xfs /dev/data_vg/nfs_lv
+  
+  - name: Creando punto de montaje
+     shell: "echo '/dev/data_vg/nfs_lv        /srv/nfs                xfs     defaults        0 0' >> /etc/fstab"
+
+  - name: Sistema de ficheros montado
+     shell: |
+      mount -a
+      df -hP 
