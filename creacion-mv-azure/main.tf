@@ -11,10 +11,10 @@ terraform {
   }
 }
 provider "azurerm" {  
-  client_id       = "${var.azure_client_id}"          #  461de720-75d4-4667-b60c-9b31e7432cba
-  client_secret   = "${var.azure_client_secret}"      #  RthD_5m_BiJICZCCkTm1PBUoL2m9JvH6t3
-  subscription_id = "${var.azure_subscription_id}"    #  88676003-704a-4be1-a001-d538140f9087
-  tenant_id       = "${var.azure_tenant_id}"          #  899789dc-202f-44b4-8472-a6d40f9eb440
+  client_id       = "${var.azure_client_id}"          #   
+  client_secret   = "${var.azure_client_secret}"      #   
+  subscription_id = "${var.azure_subscription_id}"    #   
+  tenant_id       = "${var.azure_tenant_id}"          #   
 }
 
 #################  RESOURCE GROUP  ####################################
