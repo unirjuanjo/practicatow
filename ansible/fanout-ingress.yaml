@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: simple-fanout-example
+spec:
+  rules:
+  - host: ghost.aspnetcore.com
+    http:
+      paths:
+      - path: /ghost
+        pathType: Prefix
+        backend:
+          service:
+            name: ghost
+            port:
+              number: 2368
+      - path: /aspnetcore
+        pathType: Prefix
+        backend:
+          service:
+            name: aspnetcore
+            port:
+              number: 80

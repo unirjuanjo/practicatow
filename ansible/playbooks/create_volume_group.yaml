@@ -3,17 +3,16 @@
   become: yes
   vars_files:
   - env_variables_nfs
+  
   tasks:
+  - name: Enabling Bridge Firewall Rule
+    shell: "echo '1' '{{nfs_disk}}'"
 
   - name: Inicializando dispositivo de bloque que será usado como volumen físico
-     shell: pvcreate {{nfs_disk}}
+    shell: "pvcreate '{{ nfs_disk }}'"
 
   - name: Creando el grupo del volumen
-     shell: |
-       vgcreate data_vg {{nfs_disk}}
-       vgdisplay data_vg
+    shell: "vgcreate data_vg '{{ nfs_disk }}'"
 
-
-
-
-
+  - name: Grupo de vlumen creado
+    shell: vgdisplay data_vg

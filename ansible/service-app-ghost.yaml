@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ghost
+  namespace: practica-two
+spec:
+  ports:
+  - port: 2368
+    protocol: TCP
+    targetPort: 2368
+  selector:
+    run: ghost
+  type: NodePort

@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aspnetcore
+  labels:
+    app: aspnetcore
+  namespace: practica-two
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: aspnetcore
+  template:
+    metadata:
+      labels:
+        app: aspnetcore
+    spec:
+      containers:
+      - name: aspnetcore
+        image: mcr.microsoft.com/dotnet/samples:aspnetapp  
+        ports:
+        - containerPort: 80
